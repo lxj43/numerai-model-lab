@@ -1,0 +1,8 @@
+{
+  "protocol_rules": [
+    "Use only current and previously observed cross-sectional features.",
+    "Fit preprocessing and model parameters on training dates only.",
+    "Choose among bounded structured recipes on development data.",
+    "Freeze the selection before reading any held-out scores."
+  ]
+}

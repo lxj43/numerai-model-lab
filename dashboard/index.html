@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quant Lab · 策略实验对比</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<body>
+<header><a class="brand" href="#"><span class="logo">Q<span>▥</span></span> QUANT LAB <small>量化实验室</small></a><span class="local">本地研究工作台</span></header>
+<main>
+<div class="eyebrow">NUMERAI / EXPERIMENT COMPARE</div>
+<div class="heading"><div><h1>把策略，放在一起看。</h1><p>按时间切分样本，对比预测模型的逐期排序表现。</p></div><button id="export" class="button">导出初始 Rank IC 记录</button></div>
+<div class="meta"><span>数据 <b id="dataOrigin">正在读取</b></span><span>评分 <b>Spearman Rank IC</b></span><span>目标 <b>Jupiter · 未来 60 个交易日</b></span><span id="snapshot"></span></div>
+
+
+<section class="panel agent-panel" id="agentResearch" hidden>
+<div class="section-head"><div><div class="eyebrow">STACK AGENT / RESEARCH RUN</div><h2>大模型提案，独立阶段验收</h2><p id="agentModel"></p></div><span class="status-badge" id="agentStatus"></span></div>
+<p class="agent-intro">读取方法资料与已有成绩 → 两轮提案和开发反馈 → 冻结最佳方案 → 后续历史测试</p>
+<div id="agentMetrics" class="agent-metrics"></div>
+<p id="agentProtocol" class="note"></p><div id="officialComparison"></div>
+<details><summary>查看六个提案与实际执行配置</summary><div class="table-wrap"><table><thead><tr><th>提案</th><th>实际特征方式</th><th>开发集 Rank IC</th><th>选择状态</th></tr></thead><tbody id="agentRows"></tbody></table></div><div id="agentAudit"></div></details>
+<details><summary>查看最终集成与参考资料</summary><div id="agentRecipe"></div><div id="agentSources"></div></details>
+</section>
+<section class="finding" aria-live="polite"><div class="finding-icon">↗</div><div><div class="eyebrow">本次观察</div><strong id="finding">正在读取实验结果…</strong><p>小样本历史验证；Rank IC 表示排序能力，不代表收益率，也不是官方排行榜分数。</p></div><span class="pill">相同样本对照</span></section>
+<div class="section-head"><h2>实验概览</h2><label class="switch"><input type="checkbox" id="showOriginal">显示最初基线</label></div>
+<div id="cards" class="cards three"></div>
+<section class="panel"><div class="section-head"><div><h2>十方案 · Rank IC 对比</h2><p>按平均 Rank IC 排序。模型参数与计算量不同，本表比较这些具体配置，不代表算法的最优能力。</p></div></div><div class="table-wrap"><table id="leaderboard"><thead><tr><th>排名 / 方案</th><th>类型</th><th>特征数</th><th>平均 Rank IC</th><th>IC 标准差</th><th>正相关日期</th><th>训练及预测用时</th></tr></thead><tbody id="leaderRows"></tbody></table></div><p class="note">十组共用相同的 390,492 条训练记录和 188,490 条验证记录。所有预处理仅在训练集拟合；验证集未用于调参。点击方案可查看输入及参数。</p></section>
+<section class="panel chart-panel">
+<div class="section-head"><div><h2>逐期预测能力</h2><p id="chartSubtitle"></p></div><div class="segmented"><button data-mode="daily" class="active">每期 Rank IC</button><button data-mode="cumulative">累计 Rank IC</button></div></div>
+<div class="chart-toolbar"><div id="legend"></div><label>起始日期 <select id="startDate" aria-label="图表起始日期"></select></label></div>
+<div id="chart" class="chart"></div><div id="chartTip" class="chart-tip" aria-live="polite">点击曲线上的日期，可查看该期股票预测。</div>
+<p class="chart-note" id="chartNote">零线上方表示预测排序与实际标签正相关；累计值仅为各期 IC 相加，不是资金净值。</p>
+</section>
+<section class="panel">
+<div class="section-head"><div><h2>逐只股票，检查模型判断</h2><p>任选两种模型，对比同一只股票的原始输出与当期百分位排序。</p></div><label>验证日期 <select id="detailDate" aria-label="股票明细日期"></select></label></div>
+<div class="compare-pickers"><label>方案 A <select id="modelA" aria-label="明细方案A"></select></label><label>方案 B <select id="modelB" aria-label="明细方案B"></select></label></div><div class="table-toolbar"><input id="search" type="search" placeholder="搜索股票标识，例如 000100 KR" aria-label="搜索股票标识"><span id="rowCount"></span></div>
+<div class="table-wrap"><table id="predTable"><thead id="predictionHead"></thead><tbody id="rows"></tbody></table></div>
+<div class="pagination"><span>排序分数越高，表示模型越看好相对表现；0.8 不代表上涨 80%。</span><div><button id="prev" aria-label="上一页">上一页</button><span id="pageInfo"></span><button id="next" aria-label="下一页">下一页</button></div></div>
+</section>
+<div class="bottom-grid"><section class="panel"><div class="eyebrow">EXPERIMENT SETUP</div><h2>比较的口径</h2><dl><div><dt>训练期</dt><dd id="trainPeriod"></dd></div><div><dt>验证期</dt><dd id="validPeriod"></dd></div><div><dt>实验规则</dt><dd>预先固定配置；不按验证分数选择参数。</dd></div><div><dt>时序构造</dt><dd>同一股票，精确匹配前 7 天和 14 天；仅保留历史齐全的记录。</dd></div></dl><p class="note">十组均按时间划分，训练期与验证期留有间隔。预测只使用特征；验证标签用于事后评分。未对显著性或交易成本进行评估。</p></section>
+<section class="panel live-panel"><div class="eyebrow">PREDICTION SNAPSHOT</div><h2>预测文件</h2><div class="status-badge">已生成文件 · 尚未上传</div><p id="liveText"></p><div class="live-note">Live 文件来自最初的单时点模型。新增的十方案对照仅完成历史验证，没有生成新的 live 提交。</div><p class="note">此页面展示保存的实验快照，不会自动拉取市场数据、训练模型或提交预测。</p></section></div>
+<section class="panel" id="methodPanel"><div class="section-head"><div><div class="eyebrow">METHOD & PARAMETERS</div><h2>了解每种预测方式</h2></div><select id="methodSelect" aria-label="查看方案说明"></select></div><div id="methodDetails"></div></section>
+<footer><span>QUANT LAB / 研究记录</span><span>更好的历史分数，需要更多样本与未来表现验证。</span></footer>
+<div id="error" class="error" hidden></div>
+</main></body></html>
