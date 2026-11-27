@@ -12,6 +12,26 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory dashboard
 
 打开 [本地研究看板](http://127.0.0.1:8000)。通过 HTTP 启动是因为 [dashboard/app.js](dashboard/app.js) 需要按日期加载 JSON 明细。
 
+## 实际使用截图
+
+### 模型排名
+
+查看合成样例中各模型的排名和验证指标。
+
+![模型排名](docs/screenshots/model-ranking.png)
+
+### 累计 Rank IC
+
+将图表切换到累计 Rank IC，观察不同模型在验证区间的表现。
+
+![累计 Rank IC](docs/screenshots/rank-ic-chart.png)
+
+### 同一期预测对比
+
+选定一期后对比 XGBoost 与 LightGBM 的预测，可以继续按样例标的筛选。
+
+![同一期预测对比](docs/screenshots/prediction-comparison.png)
+
 ## 复现顺序
 
 推荐 Python 3.13。下面的流程会在单独的工作目录生成合成数据、训练结果和网页。
